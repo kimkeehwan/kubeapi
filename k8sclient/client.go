@@ -183,7 +183,7 @@ func (s *ClientImpl) GetConfigMap(ctx context.Context, namespace string, name st
 	return s.clients.CoreV1().ConfigMaps(namespace).Get(ctx, name, opt)
 }
 
-func (s *ClientImpl) ListNode(ctx context.Context, namespace string, selector string) (*corev1.NodeList, error) {
+func (s *ClientImpl) ListNode(ctx context.Context, selector string) (*corev1.NodeList, error) {
 	opts := metav1.ListOptions{}
 	if selector != "" {
 		opts.LabelSelector = selector
