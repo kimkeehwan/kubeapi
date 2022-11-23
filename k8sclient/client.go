@@ -408,6 +408,21 @@ func (s *ClientImpl) DeleteServiceAccounts(ctx context.Context, namespace string
 	return s.clients.CoreV1().ServiceAccounts(namespace).DeleteCollection(ctx, deleteOpt, selectOpt)
 }
 
+func (s *ClientImpl) ApplyResourceQuota(ctx context.Context, namespace string, name string, spec corev1.ResourceList) (*corev1.ResourceQuota, error) {
+	kind := TYPEMETA_KIND_RESOURCEQUOTA
+	ver := TYPEMETA_APIVERSION_V1
+
+	config := configv1.ResourceQuotaApplyConfiguration{
+		TypeMetaApplyConfiguration:   configmetav1.TypeMetaApplyConfiguration{Kind: &kind, APIVersion: &ver},
+		ObjectMetaApplyConfiguration: &configmetav1.ObjectMetaApplyConfiguration{Namespace: &namespace, Name: &name},
+		Spec:                         &configv1.ResourceQuotaSpecApplyConfiguration{Hard: &spec},
+	}
+
+	opt := metav1.ApplyOptions{FieldManager: FIELD_MANAGER}
+
+	return s.clients.CoreV1().ResourceQuotas(namespace).Apply(ctx, &config, opt)
+}
+
 func (s *ClientImpl) ListResourceQuota(ctx context.Context, namespace string, selector string) (*corev1.ResourceQuotaList, error) {
 	opts := metav1.ListOptions{}
 	if selector != "" {
